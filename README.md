@@ -1,6 +1,6 @@
 # Chapter 1: Building Blocks
 
-### OCP Objectives
+## OCP Objectives
 
 - Handling date, time, text, numeric and boolean values.
 
@@ -10,7 +10,9 @@
   - Declare and instantiate Java objects including nested class objects, and explain the object life-cycle including creation, reassigning references, and garbage collection.
   - Understand variable scopes, use local variable type inference, apply encapsulation, and make objects immutable.
 
-## JavaDoc Comment
+## Comments
+
+### JavaDoc Comments
 
 ```java
 /**
@@ -378,3 +380,191 @@ Not all questions will include package declarations and imports. Don't worry abo
 - Code that has line numbers that don't begin with 1
 
 You'll see code that doesn't have a method. When this happens, assume any necessary plumbing code like the main() method and class definition were written correctly. You're just being asked if the part of the code you're shown compiles when dropped into valid surrounding code. Finally, remember that extra whitespace doesn't matter in Java syntax. The exam may use varying amounts of whitespace to trick you.
+
+# Chapter 2: Operators
+
+## OCP Objectives
+
+- Handling date, time, text, numeric and boolean values
+    - Use primitives and wrapper classes including Math API, parentheses, type promotion and casting to evaluate arithmetic and boolean expression
+
+## Understanding Java Operators
+
+### Operator Precedence
+
+|Operators                      |Symbols and Examples                             |Evaluation   |
+|-------------------------------|-------------------------------------------------|-------------|
+|Post-unary operators           |expression ++, expression--|Right-to-Left|
+|Pre-unary operators|++expression, --expression|Left-to-Right|
+|Other unary operators|-, !, ~, +, (type)|Right-to-Left|
+|Cast|(Type)reference|Right-to-Left|
+|Multiplication/Division/Modulus|*,/,%|Left-to-Right|
+|Addition/subtraction|+,-|Left-to-Right|
+|Shift Operators|<<,>>,>>>|Left-to-Right|
+|Relational operators|<,>,<=,>=,instanceof|Left-to-Right|
+|Equal to/not equal to|==,!=|Left-to-Right|
+|Logical AND|&|Left-to-Right|
+|Logical exclusive OR|^|Left-to-Right|
+|Logical inclusive OR|OR|Left-to-Right|
+|Conditional OR|OROR|Left-to-Right|
+|Ternary Operators|```boolean expression ? expression1:expression2```|Right-to-Left|
+|Assignment operators|=, +=, -=, *=, /=, %=, &=, ^=, <<=, >>=, >>>=|Right-to-Left|
+|Arrow Operator|->|Right-to-Left|
+
+## Applying Unary Operators
+
+By definition, a unary operator is one that requires exactly one operand, or variable, to function. They often perform simple tasks, such as increasing a numeric variable by one or negating a boolean value.
+
+For example, ~b inverts all 0s and 1s in variable b.
+```java
+int value = 3;           // Stored as 0011
+int complement = ~value; // Stored as 1100
+
+/*
+    Complement = Number * (-1) - 1
+*/
+
+int complement2 = -1 * value - 1 // -4
+int value2 = -1 * complement - 1 // 3
+```
+
+## Working with Binary Arithmetic Operators
+
+### Numeric Promotion Rules
+
+There are some rules that Java follows when applying operators to data types:
+
+- If two values have different data types, Java will automatically promote one of the values to the larger of the two data types.
+
+- If one of the values is integral and the other is floating-point, Java will automatically promote the integral value to the floating-point value's data type.
+
+- Smaller data types, namely, *short*, *byte*, and *char*, are first promoted to int any time they are used with a Java binary arithmetic operator with a variable (as opposed to a value), even if neither of the operands is *int*.
+
+- After all promotion has occured and the operands have the same data type, the resulting value will have the same data type as its promoted operands.
+
+For the third rule, note that unary operators are excluded from this rule, for example, applying ++ to a short value results in a short value.
+
+```java
+double x = 39.21;
+float y = 2.1; // DOES NOT COMPILE
+
+var z = x + y;
+```
+
+**RULE**: Floating-point literals are assumed to be ***double*** unless postfixed with an **f**, as in **2.1f**. If the value of y was set properly to **2.1f**, then the promotion would be similar to the previous example, with bot operands being promoted to a double, and the result z would be a **double** value.
+
+```java
+short x = 10;
+short y = 3;
+var z = x * y;
+```
+
+According to the rule, x and y will be casted to integer and type of z will be integer.
+
+```java
+short x = 10;
+short y = 3;
+short z = x + y; // DOES NOT COMPILE
+```
+
+## Assigning Values
+
+### Assignment Operator
+
+An assignment operator is a binary operator that modifies, or *assigns*, the variable on the left side of the operator with the result of the value on the right side of the equation. Unlike most other Java operators, the assignment operator is evaluated from right to left.
+
+The simplest assignment operator is the = assignment.
+
+```java
+int herd = 1;
+```
+
+Java will automatically promote from smaller to larger data types, but it will throw a compiler exception if it detects that you are trying to convert from larger to smaller data types without casting. 
+
+### Casting Values
+
+Casting is optional and unnecessary when converting to a larger or widening data type, but it is required when converting to a smaller or narrowing data type. Without casting, the compiler will generate an error when trying to put a larger data type inside a smallar one.
+
+```java
+int fur = (int)5; // unnecessary
+int hair = (short) 2; // pointless
+String type = (String) "Bird"; // unnecessary
+short tail = (short) (4 + 10); // unnecessary
+```
+
+```java
+float a = 2.0 / 9;    // DOES NOT COMPILE
+int b = (int) 5 * 2L; // DOES NOT COMPILE
+short c = 3 - 2.0;    // DOES NOT COMPILE
+```
+
+All of the these examples involve putting a larger value into a smaller data type.
+
+```java
+short a = (int) 5; // COMPILES
+int b = 5;
+short c = b; // DOES NOT COMPILE
+short d = 1921222 // DOES NOT COMPILE
+long e = 192301398193810323; // DOES NOT COMPILE
+long f = (long)192301398193810323; // DOES NOT COMPILE, first interpreted as an int by the compiler
+long g = 192301398193810323L; // COMPILES
+short h = (short)1921222 // COMPILES, stored as 20678
+```
+The expressions in the previous example (short h) now compile, although there's a cost. The second value, 1,921,222, is too large to be stored as a short, so numeric overflow occurs, and it becomes 20,678. Overflow is when a number is so large that it will no longer fit within the data type, so the system “wraps around” to the lowest negative value and counts up from there, similar to how modulus arithmetic works. There's also an analogous underflow, when the number is too low to fit in the data type, such as storing -200 in a byte field.
+
+```java
+short a = 10;
+short b = 3;
+
+short c = a*b; // DOES NOT COMPILE
+short d = (short)(a*b) // COMPILES
+short e = (short) a*b // DOES NOT COMPILE
+short f = 1 + (short)(a*b) // DOES NOT COMPILE
+```
+
+### Casting Values vs. Variables
+
+```java
+byte a = 1;
+short b = 2 + a; // DOES NOT COMPILE
+byte c = 1 * 2; // COMPILES
+byte d = 500 * 2; // DOES NOT COMPILE
+```
+
+The statement *short b* does not compile because *a* is a variable, not a value, and both operands are automatically promoted to int. When working with values, the compiler had enough information to determine the writer's intent. When working with variables, though, there is ambiguity about how to proceed, so the compiler reports an error. The expression *byte d* does not compile because 500 triggers an overflow for *byte*, which has a max value of 127.
+
+### Compound Assignment Operators
+
+```java
+long goat = 10;
+int sheep = 5;
+
+sheep = sheep * goat; // DOES NOT COMPILE
+sheep *= goat; // COMPILES
+```
+
+When trying to assign a long value to an int variable, compiler does not compile. But when it comes to compound operator, it will first cast sheep to a long, apply the multiplication of two long values and then cast the result to an int. Compiler does the casting operation for resulting value automatically.
+
+### Returning Value of Assignment Operators
+
+```java
+long wolf = 5;
+long coyote = (wolf=3);
+System.out.println(wolf); // 3
+System.out.println(coyote); // 3
+```
+
+The key here is that (wolf = 3) does two things,
+- Sets the value of the variable wolf to be 3
+- Returns a value of the assignment, which is also 3
+
+```java
+boolean healty = false;
+if (healty = true)
+    System.out.println("Good!");
+```
+
+Healty is set to true in the if statement, and if checks the healty's value which is true. So it prints "Good!".
+
+## Comparing Values
+
